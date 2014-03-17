@@ -1,0 +1,30 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+configurations {
+    provided
+}
+
+group 'com.inkapplications'
+version '1.0.0-SNAPSHOT'
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: 'file:///home/max/.m2/repository')
+        pom.project {
+            name 'Logcat Logger'
+            artifactId 'android-logcat-logger'
+            packaging 'jar'
+            description 'A Log implementation for android logcat logger'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.android:android:4.1.+'
+    compile 'log4j:log4j:1.2.16'
+}
