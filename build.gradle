@@ -14,11 +14,38 @@ def sonatypeRepositoryUrl = ""
 if(hasProperty("release")) {
     isReleaseBuild = true
     sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-} else if (hasProperty("dev")) {
+} else if (hasProperty("snapshot")) {
+    isSnapshot = true
     version += "-SNAPSHOT"
     sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
 } else {
     isDevBuild = true
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+if(isReleaseBuild) {
+    signing {
+        sign configurations.archives
+    }
+} else {
+    task signArchives {
+        // do nothing
+    }
 }
 
 uploadArchives {
@@ -67,11 +94,15 @@ uploadArchives {
     }
 }
 
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     compile 'com.google.android:android:4.1.+'
-    compile 'log4j:log4j:1.2.+'
+    compile 'com.squareup.dagger:dagger:1.1.+'
+    compile 'com.squareup.dagger:dagger-compiler:1.1.+'
+    compile 'com.squareup:otto:1.3.+'
 }
+
