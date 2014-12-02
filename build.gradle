@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'com.inkapplications'
-version = '1.0.0'
+version = '1.1.0'
 
 def isDevBuild = false
 def isReleaseBuild = false
@@ -94,13 +94,17 @@ uploadArchives {
     }
 }
 
+configurations {
+    provided
+    compile.extendsFrom provided
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile 'com.google.android:android:4.1.+'
-    compile 'log4j:log4j:1.2.+'
+    provided 'com.google.android:android:4.1.+'
+    provided 'log4j:log4j:1.2.+'
 }
 
