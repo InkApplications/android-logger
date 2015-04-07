@@ -1,110 +1,45 @@
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
-
-group = 'com.inkapplications'
-version = '1.1.0'
-
-def isDevBuild = false
-def isReleaseBuild = false
-
-def sonatypeRepositoryUrl = ""
-
-//set build variables based on build type (release, continuous integration, development)
-if(hasProperty("release")) {
-    isReleaseBuild = true
-    sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-} else if (hasProperty("snapshot")) {
-    isSnapshot = true
-    version += "-SNAPSHOT"
-    sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-} else {
-    isDevBuild = true
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-}
-
-if(isReleaseBuild) {
-    signing {
-        sign configurations.archives
-    }
-} else {
-    task signArchives {
-        // do nothing
-    }
-}
-
-uploadArchives {
+buildscript {
     repositories {
-        if (isDevBuild) {
-            mavenLocal()
-        } else {
-            mavenDeployer {
-                repository(url: sonatypeRepositoryUrl) {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
-
-                if(isReleaseBuild) {
-                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-                }
-                pom.project {
-                    name 'Android Logger'
-                    artifactId 'android-logger'
-                    packaging 'jar'
-                    description 'A Log implementation for android logcat logger'
-                    url 'https://github.com/InkApplications/android-logger-module'
-
-                    scm {
-                        url 'scm:git@github.com:InkApplications/android-logger.git'
-                        connection 'scm:git@github.com:InkApplications/android-logger.git'
-                        developerConnection 'scm:git@github.com:InkApplications/android-logger.git'
-                    }
-
-                    licenses {
-                        license {
-                            name 'The Apache Software License, Version 2.0'
-                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            distribution 'repo'
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id 'maxvandervelde'
-                            name 'Maxwell Vandervelde'
-                        }
-                    }
-                }
-            }
-        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.github.dcendents:android-maven-plugin:1.2'
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:2.0.1'
     }
 }
 
-configurations {
-    provided
-    compile.extendsFrom provided
+apply plugin: 'com.android.library'
+apply plugin: 'android-maven'
+apply plugin: 'optional-base'
+
+group 'com.github.InkApplications'
+version 'v2.0.0'
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 21
+        versionName project.version
+    }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven {
+        url "https://jitpack.io"
+    }
 }
-
 dependencies {
-    provided 'com.google.android:android:4.1.+'
-    provided 'log4j:log4j:1.2.+'
+    compile 'com.google.android.gms:play-services:6.5.87', optional
+    compile 'com.github.InkApplications:Prism:v1.0.0'
 }
-
