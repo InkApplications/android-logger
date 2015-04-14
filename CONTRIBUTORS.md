@@ -1,8 +1,7 @@
 Contributors
 ============
 
-This is a credits file of people that have contributed to the Prism
-library.
+This is a credits file of people that have contributed to this project.
 
  * Maxwell Vandervelde
    * Email: Max@MaxVandervelde.com
