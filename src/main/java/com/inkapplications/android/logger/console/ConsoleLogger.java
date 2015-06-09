@@ -4,9 +4,8 @@
  */
 package com.inkapplications.android.logger.console;
 
-import android.content.res.Resources;
 import android.util.Log;
-import prism.framework.DisplayName;
+import com.inkapplications.android.logger.LogName;
 
 /**
  * Logs to Android's static Logcat logger.
@@ -18,9 +17,6 @@ import prism.framework.DisplayName;
  */
 public class ConsoleLogger extends EnvironmentAwareLogger
 {
-    /** Android resources service for looking up message strings. */
-    final private Resources resources;
-
     /** The tag used on the Android logger on all messages. */
     final private String loggerTag;
 
@@ -28,7 +24,6 @@ public class ConsoleLogger extends EnvironmentAwareLogger
     final private boolean sensitive;
 
     /**
-     * @param resources Android resources service for looking up message strings.
      * @param isDebug Changes whether low-level messages should be displayed.
      *                This should be false when the application is in production.
      * @param isSensitive Whether the application should crash on error/fatal
@@ -37,14 +32,12 @@ public class ConsoleLogger extends EnvironmentAwareLogger
      * @param loggerTag The tag used on the Android logger on all messages.
      */
     public ConsoleLogger(
-        Resources resources,
         boolean isDebug,
         boolean isSensitive,
         String loggerTag
     ) {
         super(isDebug);
 
-        this.resources = resources;
         this.loggerTag = loggerTag;
         this.sensitive = isSensitive;
     }
@@ -190,9 +183,8 @@ public class ConsoleLogger extends EnvironmentAwareLogger
             return "null";
         }
 
-        if (logged.getClass().isAnnotationPresent(DisplayName.class)) {
-            int resource = logged.getClass().getAnnotation(DisplayName.class).value();
-            return this.resources.getString(resource);
+        if (logged.getClass().isAnnotationPresent(LogName.class)) {
+            return logged.getClass().getAnnotation(LogName.class).value();
         }
 
         return logged.toString();

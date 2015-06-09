@@ -14,7 +14,7 @@ apply plugin: 'android-maven'
 apply plugin: 'optional-base'
 
 group 'com.github.InkApplications'
-version 'v2.0.0'
+version 'v3.0.0'
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
@@ -41,5 +41,4 @@ repositories {
 }
 dependencies {
     compile 'com.google.android.gms:play-services:6.5.87', optional
-    compile 'com.github.InkApplications:Prism:v1.0.0'
 }
