@@ -4,21 +4,18 @@
  */
 package com.inkapplications.android.logger.analytics;
 
-import android.content.res.Resources;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.inkapplications.android.logger.LogName;
 import org.apache.commons.logging.Log;
-import prism.framework.DisplayName;
 
 final public class AnalyticsLogger implements Log
 {
     final private Tracker analyticsTracker;
-    final private Resources resources;
 
-    public AnalyticsLogger(Tracker analyticsTracker, Resources resources)
+    public AnalyticsLogger(Tracker analyticsTracker)
     {
         this.analyticsTracker = analyticsTracker;
-        this.resources = resources;
     }
 
     @Override
@@ -99,7 +96,7 @@ final public class AnalyticsLogger implements Log
     @Override
     public void trace(Object o)
     {
-        if (o.getClass().isAnnotationPresent(DisplayName.class)) {
+        if (o.getClass().isAnnotationPresent(LogName.class)) {
             this.logScreen(o);
             return;
         }
@@ -142,16 +139,16 @@ final public class AnalyticsLogger implements Log
      * ScreenName annotation.
      *
      * @param o The object containing a DisplayName annotation to be logged.
-     * @see DisplayName
+     * @see com.inkapplications.android.logger.LogName
      */
     private void logScreen(Object o)
     {
-        DisplayName annotation = o.getClass().getAnnotation(DisplayName.class);
+        LogName annotation = o.getClass().getAnnotation(LogName.class);
         if (null == annotation) {
             return;
         }
 
-        String name = this.resources.getString(annotation.value());
+        String name = annotation.value();
         this.analyticsTracker.setScreenName(name);
         this.analyticsTracker.send(new HitBuilders.AppViewBuilder().build());
     }

@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+v3.0.0
+------
+ - Loggers no longer require android resources as a dependency.
+ - New `LogName` annotation used instead of the old `ScreenName` in order to
+   decouple the logged statements from the user-displayed name.
+
 v2.0.0
 ------
  - Added new logger types
